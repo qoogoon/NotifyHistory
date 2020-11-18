@@ -1,7 +1,5 @@
 package com.kumestudio.notify.ui.main
 
-//import androidx.lifecycle.ViewModelProviders
-
 import android.app.Application
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,7 +8,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView.VERTICAL
@@ -24,6 +21,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+/**
+ * 데이터 바인딩하여 데이터를 RecyclerListView에 가시화하는 Fragment
+ */
 
 class MainFragment : Fragment() {
 
@@ -42,25 +42,36 @@ class MainFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        initViewModel()
+        db = Room.databaseBuilder(requireContext(),AppDatabase::class.java, "database").build()
+        initAlarmList()
+        initNotifyData()
+    }
 
-        //view model
+    /**
+     * ViewModel 초기설정
+     */
+    private fun initViewModel(){
         viewModelFactory = ViewModelProvider.AndroidViewModelFactory.getInstance(Application())
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         viewModel.listData.observe(viewLifecycleOwner, getNotifyListObserver())
+    }
 
-        //DB
-        db = Room.databaseBuilder(requireContext(),AppDatabase::class.java, "database")
-            .build()
-
-        //알림 리스트 어뎁터
+    /**
+     * 알림 리스트 초기설정
+     */
+    private fun initAlarmList(){
         notificationList.adapter =
-            NotifyListAdapter(MutableLiveData<List<NotificationData>>(),requireContext())
+                NotifyListAdapter(MutableLiveData<List<NotificationData>>(),requireContext())
 
-        //알림 리스트 구분선
         val decoration = DividerItemDecoration(requireContext(),VERTICAL)
         notificationList.addItemDecoration(decoration)
+    }
 
-        //알림 리스트에 초기값 넣기
+    /**
+     * 알림 데이터 초기 삽입
+     */
+    private fun initNotifyData(){
         CoroutineScope(Dispatchers.IO).launch {
             val notificationAll = db.notificationDao().getAll()
             CoroutineScope(Dispatchers.Main).launch {
@@ -71,6 +82,7 @@ class MainFragment : Fragment() {
 
     /**
      * 알림 리스트 옵저버
+     * @return Observer
      */
     private fun getNotifyListObserver() : Observer<List<NotificationData>>{
         return Observer { arrData->
