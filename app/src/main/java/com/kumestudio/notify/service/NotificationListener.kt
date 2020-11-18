@@ -13,12 +13,14 @@ import com.kumestudio.notify.act.MainActivity
 import com.kumestudio.notify.constant.Tag
 import com.kumestudio.notify.db.AppDatabase
 import com.kumestudio.notify.db.NotificationData
-import com.kumestudio.notify.ui.main.MainFragment
 import com.kumestudio.notify.ui.main.MainViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+/**
+ * 알림 수신 시 Background에서 해당 데이터를 가공하여, 로컬 DB에 삽입하는 Service
+ */
 class NotificationListener : NotificationListenerService() {
     private lateinit var db : AppDatabase
     private var nullAbleColumns : List<String> = listOf(
@@ -59,6 +61,11 @@ class NotificationListener : NotificationListenerService() {
         if(sbn == null)
             return
 
+        val isShowWhen = sbn.notification.extras.get(Notification.EXTRA_SHOW_WHEN) != null &&
+                sbn.notification.extras.get(Notification.EXTRA_SHOW_WHEN) as Boolean
+        if(!isShowWhen)
+            return
+
         val isSystemAlarm = sbn.notification.`when` == SYSTEM_ALARM_DEFAULT_TIME
         if(isSystemAlarm)
             return 
@@ -71,10 +78,6 @@ class NotificationListener : NotificationListenerService() {
         val isMediaNotify = template == "android.app.Notification"+"$"+"MediaStyle"
         if(isMediaNotify)
             return
-
-//        val isIndeterminateProgress = sbn.notification.extras.get(Notification.EXTRA_PROGRESS_INDETERMINATE) //작업 경과 시간을 모르는 경우(ex. 미러링 중인 상태)
-//        if(isIndeterminateProgress == null || isIndeterminateProgress == "true")
-//            return
 
         if(baseBlackList.contains(sbn.packageName))
             return
