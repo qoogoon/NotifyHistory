@@ -76,6 +76,21 @@
                 android:layout_marginTop="5dp"
                 />
         </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintTop_toBottomOf="@+id/contentLayout"
+            app:layout_constraintLeft_toLeftOf="parent">
+            <TextView
+                android:id="@+id/extra"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/main_listItem_dummy_text"
+                android:layout_marginTop="5dp"
+                />
+        </LinearLayout>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

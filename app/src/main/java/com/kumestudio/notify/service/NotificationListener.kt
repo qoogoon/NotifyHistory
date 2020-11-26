@@ -61,23 +61,23 @@ class NotificationListener : NotificationListenerService() {
         if(sbn == null)
             return
 
-        val isShowWhen = sbn.notification.extras.get(Notification.EXTRA_SHOW_WHEN) != null &&
-                sbn.notification.extras.get(Notification.EXTRA_SHOW_WHEN) as Boolean
-        if(!isShowWhen)
-            return
+//        val isShowWhen = sbn.notification.extras.get(Notification.EXTRA_SHOW_WHEN) != null &&
+//                sbn.notification.extras.get(Notification.EXTRA_SHOW_WHEN) as Boolean
+//        if(!isShowWhen)
+//            return
 
-        val isSystemAlarm = sbn.notification.`when` == SYSTEM_ALARM_DEFAULT_TIME
-        if(isSystemAlarm)
-            return 
+//        val isSystemAlarm = sbn.notification.`when` == SYSTEM_ALARM_DEFAULT_TIME
+//        if(isSystemAlarm)
+//            return
 
         val isNullText = sbn.notification.extras.get(Notification.EXTRA_TEXT) == null
         if(isNullText)
             return
 
-        val template = sbn.notification.extras.get(Notification.EXTRA_TEMPLATE)
-        val isMediaNotify = template == "android.app.Notification"+"$"+"MediaStyle"
-        if(isMediaNotify)
-            return
+//        val template = sbn.notification.extras.get(Notification.EXTRA_TEMPLATE)
+//        val isMediaNotify = template == "android.app.Notification"+"$"+"MediaStyle"
+//        if(isMediaNotify)
+//            return
 
         if(baseBlackList.contains(sbn.packageName))
             return
@@ -109,7 +109,7 @@ class NotificationListener : NotificationListenerService() {
         val packageName = sbn.packageName
 
         val notification = NotificationData(appName, text, `when`, smallIcon, packageName)
-
+        notification.extra = sbn.notification.extras.toString()
         nullAbleColumns.forEach { column->
             val value = sbn.notification.extras.get(column)
             if(value != null)

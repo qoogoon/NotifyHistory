@@ -25,6 +25,7 @@ class NotifyListAdapter(var data : LiveData<List<NotificationData>>, var context
         var appName: TextView = itemView.appName
         var date: TextView = itemView.date
         var title: TextView = itemView.title
+        var extra: TextView = itemView.extra
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -46,7 +47,7 @@ class NotifyListAdapter(var data : LiveData<List<NotificationData>>, var context
         holder.notifyText.text = text
         holder.smallIcon.setImageDrawable(smallIcon.loadDrawable(context))
         holder.date.text = SimpleDateFormat("h:mm a", Locale.KOREA).format(date)
-
+        holder.extra.text = data.value!![position].extra
         if(title != null)
             holder.title.text = title
         else
