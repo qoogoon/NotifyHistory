@@ -32,8 +32,8 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'com.google.android.material:material:1.2.1'
-    implementation 'androidx.wear:wear:1.0.0'
-    compileOnly 'com.google.android.wearable:wearable:2.6.0'
+
+    implementation "com.github.skydoves:expandablelayout:1.0.6"
 
     //#region lifecycle
     def lifecycle_version = "2.2.0"

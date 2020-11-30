@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView.VERTICAL
 import androidx.room.Room
+import com.kumestudio.notify.Data
 import com.kumestudio.notify.R
 import com.kumestudio.notify.adapter.main.NotifyListAdapter
 import com.kumestudio.notify.db.AppDatabase
@@ -62,7 +63,7 @@ class MainFragment : Fragment() {
      */
     private fun initAlarmList(){
         notificationList.adapter =
-                NotifyListAdapter(MutableLiveData<List<NotificationData>>(),requireContext())
+                NotifyListAdapter(arrayListOf(),requireContext())
 
         val decoration = DividerItemDecoration(requireContext(),VERTICAL)
         notificationList.addItemDecoration(decoration)
@@ -86,11 +87,22 @@ class MainFragment : Fragment() {
      */
     private fun getNotifyListObserver() : Observer<List<NotificationData>>{
         return Observer { arrData->
-            val listData = MutableLiveData<List<NotificationData>>()
             val adapter = (notificationList.adapter as NotifyListAdapter)
 
-            listData.value = arrData.reversed()
-            adapter.data = listData
+            val groupList : MutableList<Data.NotificationGroup> = mutableListOf()
+            var tmpData : NotificationData? = null
+            for(data in arrData.reversed()){
+                if(tmpData != null && data.packageName == tmpData.packageName &&
+                        data.title == tmpData.title){
+                    groupList.last().childNotifications.add(data)
+
+                }else{
+                    groupList.add(Data.NotificationGroup(data.appName, data.text, data.`when`, data.smallIcon, data.packageName, mutableListOf(data)))
+                    tmpData = data
+                }
+            }
+
+            adapter.data = groupList
             adapter.notifyDataSetChanged()
         }
     }

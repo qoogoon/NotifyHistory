@@ -17,6 +17,8 @@ import com.kumestudio.notify.ui.main.MainViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.lang.Exception
+import java.util.*
 
 /**
  * 알림 수신 시 Background에서 해당 데이터를 가공하여, 로컬 DB에 삽입하는 Service
@@ -27,8 +29,9 @@ class NotificationListener : NotificationListenerService() {
         Notification.EXTRA_SUB_TEXT, Notification.EXTRA_TITLE)
     private val SYSTEM_ALARM_DEFAULT_TIME = 0L
     private val baseBlackList = listOf(
-        "com.android.vending",   //Google Play 스토어
-        "com.google.android.gms"    //Google Play 서비스
+        "com.android.vending"   //Google Play 스토어
+        , "com.google.android.gms"    //Google Play 서비스
+        , "com.android.systemui"      //시스템UI
     )
     
     override fun onBind(intent: Intent?): IBinder? {
@@ -61,23 +64,24 @@ class NotificationListener : NotificationListenerService() {
         if(sbn == null)
             return
 
-//        val isShowWhen = sbn.notification.extras.get(Notification.EXTRA_SHOW_WHEN) != null &&
-//                sbn.notification.extras.get(Notification.EXTRA_SHOW_WHEN) as Boolean
-//        if(!isShowWhen)
-//            return
-
-//        val isSystemAlarm = sbn.notification.`when` == SYSTEM_ALARM_DEFAULT_TIME
-//        if(isSystemAlarm)
-//            return
-
-        val isNullText = sbn.notification.extras.get(Notification.EXTRA_TEXT) == null
-        if(isNullText)
+        val showWhen = sbn.notification.extras.get(Notification.EXTRA_SHOW_WHEN)
+        val isShowWhen = showWhen != null && showWhen as Boolean
+        if(!isShowWhen)
             return
 
-//        val template = sbn.notification.extras.get(Notification.EXTRA_TEMPLATE)
-//        val isMediaNotify = template == "android.app.Notification"+"$"+"MediaStyle"
-//        if(isMediaNotify)
-//            return
+        val isSystemAlarm = sbn.notification.`when` == SYSTEM_ALARM_DEFAULT_TIME
+        if(isSystemAlarm)
+            return
+
+        val isNullText = sbn.notification.extras.get(Notification.EXTRA_TEXT) == null
+        val isNullTitle = sbn.notification.extras.get(Notification.EXTRA_TITLE) == null
+        if(isNullText && isNullTitle)
+            return
+
+        val template = sbn.notification.extras.get(Notification.EXTRA_TEMPLATE)
+        val isMediaNotify = template == "android.app.Notification"+"$"+"MediaStyle"
+        if(isMediaNotify)
+            return
 
         if(baseBlackList.contains(sbn.packageName))
             return
@@ -102,36 +106,40 @@ class NotificationListener : NotificationListenerService() {
      * @return 알림 Entity의 Row객체
      */
     private fun getNotificationData(sbn: StatusBarNotification): NotificationData {
-        val appName = getApplicationName(sbn)
-        val text = sbn.notification.extras.get(Notification.EXTRA_TEXT).toString()
-        val `when` = sbn.notification.`when`
-        val smallIcon = sbn.notification.smallIcon.resId
-        val packageName = sbn.packageName
+        try{
+            val appName = getApplicationName(sbn)
+            val text = sbn.notification.extras.get(Notification.EXTRA_TEXT).toString()
+            val `when` = sbn.notification.`when`
+            val smallIcon = sbn.notification.smallIcon.resId
+            val packageName = sbn.packageName
 
-        val notification = NotificationData(appName, text, `when`, smallIcon, packageName)
-        notification.extra = sbn.notification.extras.toString()
-        nullAbleColumns.forEach { column->
-            val value = sbn.notification.extras.get(column)
-            if(value != null)
-                when(column){
-                    Notification.EXTRA_TITLE ->
-                        notification.title =  value.toString()
-                    Notification.EXTRA_SUB_TEXT ->
-                        notification.subText =  value.toString()
-                    Notification.EXTRA_PROGRESS_INDETERMINATE->
-                        notification.progress = value as Boolean
-                }
-        }
-
-        if(sbn.notification.getLargeIcon() != null){
-            try {
-                notification.largeIcon =  sbn.notification.getLargeIcon().resId
-            }catch (exception: IllegalStateException){
-                Log.i(Tag.SERVICE, "largeIcon resId 예외처리")
+            val notification = NotificationData(appName, text, `when`, smallIcon, packageName)
+            notification.extra = sbn.notification.extras.toString()
+            nullAbleColumns.forEach { column->
+                val value = sbn.notification.extras.get(column)
+                if(value != null)
+                    when(column){
+                        Notification.EXTRA_TITLE ->
+                            notification.title =  value.toString()
+                        Notification.EXTRA_SUB_TEXT ->
+                            notification.subText =  value.toString()
+                        Notification.EXTRA_PROGRESS_INDETERMINATE->
+                            notification.progress = value as Boolean
+                    }
             }
-        }
 
-        return notification
+            if(sbn.notification.getLargeIcon() != null){
+                try {
+                    notification.largeIcon =  sbn.notification.getLargeIcon().resId
+                }catch (exception: IllegalStateException){
+                    Log.i(Tag.SERVICE, "largeIcon resId 예외처리")
+                }
+            }
+            return notification
+
+        }catch (e: Exception){
+            return NotificationData("error", e.message!!, Date().time, 0, packageName)
+        }
     }
 
     /**
