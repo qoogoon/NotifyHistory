@@ -32,8 +32,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'com.google.android.material:material:1.2.1'
-
-    implementation "com.github.skydoves:expandablelayout:1.0.6"
+    implementation 'net.cachapa.expandablelayout:expandablelayout:2.9.2'
 
     //#region lifecycle
     def lifecycle_version = "2.2.0"

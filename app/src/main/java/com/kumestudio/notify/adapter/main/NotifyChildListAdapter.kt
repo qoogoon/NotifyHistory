@@ -12,23 +12,14 @@ import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.kumestudio.notify.R
 import com.kumestudio.notify.db.NotificationData
-import kotlinx.android.synthetic.main.main_listitem_notifycation_child.view.*
+import kotlinx.android.synthetic.main.main_item_notifycation_child.view.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-class NotifyChildListAdapter(var data : List<Data>) : RecyclerView.Adapter<NotifyChildListAdapter.ViewHolder>() {
-    data class Data(val title : String, val content : String)
-    private val baseBlackList = listOf(
-            "android.title"
-            , "android.text"
-            , "android.bigText"
-            , "android.title.big"
-    )
+class NotifyChildListAdapter(var data : List<NotificationData>) : RecyclerView.Adapter<NotifyChildListAdapter.ViewHolder>() {
     inner class ViewHolder constructor(parent : ViewGroup) : RecyclerView.ViewHolder(
         LayoutInflater.from(parent.context).
-        inflate(R.layout.main_listitem_notifycation_child, parent, false)){
-        var title: TextView = itemView.title
-        var content: TextView = itemView.content
+        inflate(R.layout.main_item_notifycation_child, parent, false)){
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -36,13 +27,10 @@ class NotifyChildListAdapter(var data : List<Data>) : RecyclerView.Adapter<Notif
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        if(baseBlackList.contains(data[position].title)){
-            holder.title.height = 0
-            holder.content.height = 0
-            return
-        }
-        holder.title.text = data[position].title
-        holder.content.text = data[position].content
+        holder.itemView.text.text = data[position].text
+
+        val date = Date(data[position].`when`)
+        holder.itemView.date.text = SimpleDateFormat("h:mm a", Locale.KOREA).format(date)
     }
 
     override fun getItemCount(): Int {

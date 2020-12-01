@@ -27,7 +27,8 @@ class NotificationListener : NotificationListenerService() {
     private lateinit var db : AppDatabase
     private var nullAbleColumns : List<String> = listOf(
         Notification.EXTRA_SUB_TEXT, Notification.EXTRA_TITLE)
-    private val SYSTEM_ALARM_DEFAULT_TIME = 0L
+    private val
+            SYSTEM_ALARM_DEFAULT_TIME = 0L
     private val baseBlackList = listOf(
         "com.android.vending"   //Google Play 스토어
         , "com.google.android.gms"    //Google Play 서비스

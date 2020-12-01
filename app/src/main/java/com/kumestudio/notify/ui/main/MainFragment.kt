@@ -97,7 +97,9 @@ class MainFragment : Fragment() {
                     groupList.last().childNotifications.add(data)
 
                 }else{
-                    groupList.add(Data.NotificationGroup(data.appName, data.text, data.`when`, data.smallIcon, data.packageName, mutableListOf(data)))
+                    val insertGroup = Data.NotificationGroup(data.appName, data.text, data.`when`, data.smallIcon, data.packageName, mutableListOf(), 0)
+                    insertGroup.title = data.title
+                    groupList.add(insertGroup)
                     tmpData = data
                 }
             }

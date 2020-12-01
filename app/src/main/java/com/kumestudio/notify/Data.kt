@@ -10,7 +10,8 @@ class Data {
             val `when` : Long,
             val smallIcon : Int,
             val packageName : String,
-            val childNotifications : MutableList<NotificationData>
+            val childNotifications : MutableList<NotificationData>,
+            val type : Int
     ){
         var title : String? = null
     }

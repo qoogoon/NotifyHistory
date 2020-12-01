@@ -18,6 +18,6 @@ data class NotificationData(
     @ColumnInfo(name="title") var title : String? = null
     @ColumnInfo(name="sub_text") var subText : String? = null
     @ColumnInfo(name="progress") var progress : Boolean ? = null
-    @ColumnInfo(name="extra") var extra : String ? = null       //개발용(모든 상태 저장)
+    @ColumnInfo(name="extra") var extra : String ? = null
 
 }
