@@ -7,4 +7,6 @@
     <color name="appBackground">#BCBCBC</color>
     <color name="itemNotifyBackground">#FFFFFF</color>
 
+    <color name="itemTimeBackground">#ECECEC</color>
+
 </resources>

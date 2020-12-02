@@ -7,7 +7,7 @@ import androidx.room.Query
 
 @Dao
 interface NotificationDao {
-    @Query("SELECT * FROM NotificationData")
+    @Query("SELECT * FROM NotificationData order by `when` desc")
     fun getAll(): List<NotificationData>
 
     @Insert

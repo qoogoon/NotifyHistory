@@ -21,6 +21,7 @@ import kotlinx.android.synthetic.main.main_fragment.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.*
 
 /**
  * 데이터 바인딩하여 데이터를 RecyclerListView에 가시화하는 Fragment
@@ -91,14 +92,25 @@ class MainFragment : Fragment() {
 
             val groupList : MutableList<Data.NotificationGroup> = mutableListOf()
             var tmpData : NotificationData? = null
-            for(data in arrData.reversed()){
-                if(tmpData != null && data.packageName == tmpData.packageName &&
-                        data.title == tmpData.title){
-                    groupList.last().childNotifications.add(data)
-
+            var divHour : Int? = null
+            var divDay : Int? = null
+            for(data in arrData){
+                val isChildData = tmpData != null && data.packageName == tmpData.packageName &&
+                        data.title == tmpData.title
+                if(isChildData){
+                    groupList.last().childNotifications!!.add(data)
                 }else{
-                    val insertGroup = Data.NotificationGroup(data.appName, data.text, data.`when`, data.smallIcon, data.packageName, mutableListOf(), 0)
-                    insertGroup.title = data.title
+                    if(divDay != getDay(data.`when`)){
+                        groupList.add(Data.NotificationGroup(Data.DATE, data.`when`))
+                        divDay = getDay(data.`when`)
+                    }
+
+                    if(divHour != getHour(data.`when`)){
+                        groupList.add(Data.NotificationGroup(Data.TIME, data.`when`))
+                        divHour = getHour(data.`when`)
+                    }
+
+                    val insertGroup = Data.NotificationGroup(Data.NOTIFICATION, data.`when`, mutableListOf(data))
                     groupList.add(insertGroup)
                     tmpData = data
                 }
@@ -107,6 +119,18 @@ class MainFragment : Fragment() {
             adapter.data = groupList
             adapter.notifyDataSetChanged()
         }
+    }
+
+    private fun getHour(dateTime : Long): Int{
+        val firstDataTime = Calendar.getInstance()
+        firstDataTime.time = Date(dateTime)
+        return firstDataTime.get(Calendar.HOUR_OF_DAY)
+    }
+
+    private fun getDay(dateTime : Long): Int{
+        val firstDataTime = Calendar.getInstance()
+        firstDataTime.time = Date(dateTime)
+        return firstDataTime.get(Calendar.DAY_OF_MONTH)
     }
 }
 

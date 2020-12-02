@@ -3,6 +3,7 @@
     <string name="service_name">Notify_Background</string>
     <string name="main_listItem_dummy_appName">app name</string>
     <string name="main_listItem_dummy_time">00:00</string>
+    <string name="main_listItem_dummy_date">00년 00월 00일</string>
     <string name="main_listItem_dummy_title">title</string>
     <string name="main_listItem_dummy_text">text</string>
 
