@@ -1,6 +1,8 @@
 package com.kumestudio.notify.service
 
+import android.app.ActivityManager
 import android.app.Notification
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.os.IBinder
@@ -88,16 +90,26 @@ class NotificationListener : NotificationListenerService() {
             return
 
         val notification = getNotificationData(sbn)
-        val viewModel = ViewModelProvider(MainActivity.mainFragment).get(MainViewModel::class.java)
 
         CoroutineScope(Dispatchers.IO).launch {
             db.notificationDao().insert(notification)
             Log.i(Tag.SERVICE,"insert notification data : ${notification.packageName}")
+            if(!MainActivity.active) return@launch
+            Log.i(Tag.SERVICE,"refresh list")
 
             val notificationAll = db.notificationDao().getAll()
-            CoroutineScope(Dispatchers.Main).launch {
-                viewModel.listData.value = notificationAll.toMutableList()
-            }
+//            try{
+
+
+                val viewModel = ViewModelProvider(MainActivity.mainFragment).get(MainViewModel::class.java)
+                CoroutineScope(Dispatchers.Main).launch {
+                    viewModel.listData.value = notificationAll.toMutableList()
+                }
+
+//            }catch (ex : java.lang.IllegalStateException){
+//                Log.e(Tag.SERVICE, "viewmodel error : ${ex.message}")
+//            }
+
         }
     }
 

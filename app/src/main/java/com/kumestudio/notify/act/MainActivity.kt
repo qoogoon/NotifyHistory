@@ -11,11 +11,13 @@ import com.kumestudio.notify.ui.main.MainFragment
 class MainActivity : AppCompatActivity() {
     companion object{
         var mainFragment: MainFragment= MainFragment.newInstance()
+        var active : Boolean = false
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
+        active = true
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
                     .replace(R.id.container, mainFragment)
@@ -26,6 +28,11 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"));
 
         startService(Intent(applicationContext, NotificationListener::class.java))
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        active = false
     }
 
     /**
