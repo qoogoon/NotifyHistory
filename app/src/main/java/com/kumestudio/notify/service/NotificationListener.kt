@@ -76,9 +76,9 @@ class NotificationListener : NotificationListenerService() {
         if(isSystemAlarm)
             return
 
-        val isNullText = sbn.notification.extras.get(Notification.EXTRA_TEXT) == null
+        val isNullText = sbn.notification.extras.get(Notification.EXTRA_TEXT) == "null"
         val isNullTitle = sbn.notification.extras.get(Notification.EXTRA_TITLE) == null
-        if(isNullText && isNullTitle)
+        if(isNullText || isNullTitle)
             return
 
         val template = sbn.notification.extras.get(Notification.EXTRA_TEMPLATE)
@@ -99,17 +99,13 @@ class NotificationListener : NotificationListenerService() {
 
             val notificationAll = db.notificationDao().getAll()
 //            try{
-
-
                 val viewModel = ViewModelProvider(MainActivity.mainFragment).get(MainViewModel::class.java)
                 CoroutineScope(Dispatchers.Main).launch {
                     viewModel.listData.value = notificationAll.toMutableList()
                 }
-
 //            }catch (ex : java.lang.IllegalStateException){
 //                Log.e(Tag.SERVICE, "viewmodel error : ${ex.message}")
 //            }
-
         }
     }
 

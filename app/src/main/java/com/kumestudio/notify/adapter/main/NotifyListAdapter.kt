@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.kumestudio.notify.Data
 import com.kumestudio.notify.R
+import com.kumestudio.notify.constant.Tag
 import kotlinx.android.synthetic.main.main_item_date.view.*
 import kotlinx.android.synthetic.main.main_item_notification.view.*
 import kotlinx.android.synthetic.main.main_item_time.view.*
@@ -73,7 +74,7 @@ class NotifyListAdapter(var data  :MutableList<Data.NotificationGroup>, var cont
             holder.itemView.childList.adapter!!.notifyDataSetChanged()
 
             holder.itemView.expandButton.setOnClickListener {
-                Log.i("qwer", position.toString())
+                Log.i(Tag.NotifyListAdapter, position.toString())
                 holder.itemView.detailLayout.toggle()
             }
 
