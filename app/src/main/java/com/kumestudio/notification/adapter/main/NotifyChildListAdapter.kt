@@ -1,17 +1,10 @@
-package com.kumestudio.notify.adapter.main
+package com.kumestudio.notification.adapter.main
 
-import android.content.Context
-import android.graphics.Color
-import android.graphics.drawable.Icon
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
-import com.kumestudio.notify.R
-import com.kumestudio.notify.db.NotificationData
+import com.kumestudio.notification.R
+import com.kumestudio.notification.db.NotificationData
 import kotlinx.android.synthetic.main.main_item_notifycation_child.view.*
 import java.text.SimpleDateFormat
 import java.util.*

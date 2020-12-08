@@ -1,4 +1,4 @@
-package com.kumestudio.notify.db
+package com.kumestudio.notification.db
 
 import androidx.room.Dao
 import androidx.room.Delete

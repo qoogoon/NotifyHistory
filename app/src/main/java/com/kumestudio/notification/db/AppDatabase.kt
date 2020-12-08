@@ -1,4 +1,4 @@
-package com.kumestudio.notify.db
+package com.kumestudio.notification.db
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

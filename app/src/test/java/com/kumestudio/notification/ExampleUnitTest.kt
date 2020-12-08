@@ -1,4 +1,4 @@
-package com.kumestudio.notify
+package com.kumestudio.notification
 
 import org.junit.Test
 

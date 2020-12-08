@@ -1,4 +1,4 @@
-package com.kumestudio.notify
+package com.kumestudio.notification
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

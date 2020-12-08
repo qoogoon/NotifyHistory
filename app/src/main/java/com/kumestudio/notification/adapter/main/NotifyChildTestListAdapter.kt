@@ -1,10 +1,10 @@
-package com.kumestudio.notify.adapter.main
+package com.kumestudio.notification.adapter.main
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.kumestudio.notify.R
+import com.kumestudio.notification.R
 import kotlinx.android.synthetic.main.main_item_notifycation_child_test.view.*
 
 class NotifyChildTestListAdapter(var data : List<Data>) : RecyclerView.Adapter<NotifyChildTestListAdapter.ViewHolder>() {

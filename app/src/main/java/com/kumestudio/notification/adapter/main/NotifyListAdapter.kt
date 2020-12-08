@@ -1,22 +1,28 @@
-package com.kumestudio.notify.adapter.main
+package com.kumestudio.notification.adapter.main
 
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.graphics.drawable.AnimationDrawable
 import android.graphics.drawable.Icon
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.kumestudio.notify.Data
-import com.kumestudio.notify.R
-import com.kumestudio.notify.constant.Tag
+import androidx.room.Room
+import com.kumestudio.notification.Data
+import com.kumestudio.notification.R
+import com.kumestudio.notification.db.AppDatabase
+import com.kumestudio.notification.ui.main.MainFragment
 import kotlinx.android.synthetic.main.main_item_date.view.*
 import kotlinx.android.synthetic.main.main_item_notification.view.*
 import kotlinx.android.synthetic.main.main_item_time.view.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -32,6 +38,8 @@ class NotifyListAdapter(var data  :MutableList<Data.NotificationGroup>, var cont
     inner class ContentViewHolder constructor(parent : ViewGroup) : RecyclerView.ViewHolder(
         LayoutInflater.from(parent.context).
         inflate(R.layout.main_item_notification, parent, false))
+
+    val db = Room.databaseBuilder(context, AppDatabase::class.java, "database").build()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when(viewType){
@@ -73,13 +81,51 @@ class NotifyListAdapter(var data  :MutableList<Data.NotificationGroup>, var cont
             holder.itemView.childList.adapter = NotifyChildListAdapter(data[position].childNotifications!!.drop(1))
             holder.itemView.childList.adapter!!.notifyDataSetChanged()
 
-            holder.itemView.expandButton.setOnClickListener {
-                Log.i(Tag.NotifyListAdapter, position.toString())
-                holder.itemView.detailLayout.toggle()
+//            holder.itemView.contentLayout.setOnClickListener {
+//                data[position].isExpanding = !data[position].isExpanding
+//                holder.itemView.detailLayout.toggle()
+//                notifyItemChanged(position)
+//            }
+            holder.itemView.contentLayout.setOnClickListener(getExpandListener(holder.itemView, position))
+            holder.itemView.expandButton.setOnClickListener(getExpandListener(holder.itemView, position))
+
+            if(data[position].isExpanding){
+                holder.itemView.detailLayout.expand(false)
+                holder.itemView.text.maxLines = 100
+                holder.itemView.expandButton.rotation = 180f
+            }else{
+                holder.itemView.text.maxLines = 1
+                holder.itemView.detailLayout.collapse(false)
+                holder.itemView.expandButton.rotation = 0f
             }
 
-            holder.itemView.contentLayout.setOnClickListener {
+            holder.itemView.headerLayout.setOnClickListener {
                 openApp(context, childFirstData.packageName)
+            }
+
+            holder.itemView.alarmSettingBtn.setOnClickListener {
+                val packageName = data[position].childNotifications!![0].packageName
+                val intent = Intent()
+                intent.action = "android.settings.APP_NOTIFICATION_SETTINGS"
+                intent.putExtra("android.provider.extra.APP_PACKAGE", packageName)
+                context.startActivity(intent)
+            }
+
+            holder.itemView.alarmDeleteBtn.setOnClickListener {
+                val deleteList = data[position].childNotifications!!
+                CoroutineScope(Dispatchers.IO).launch{
+                    if(MainFragment.viewModel == null) return@launch
+                    //DB에서 제거
+                    deleteList.forEach { data->
+                        db.notificationDao().delete(data)
+                    }
+
+                    //UI에서 제거
+                    CoroutineScope(Dispatchers.Main).launch {
+                        val deletedList = MainFragment.viewModel!!.listData.value!!.filter { data -> !(deleteList.contains(data)) }
+                        MainFragment.viewModel!!.listData.value = deletedList.toMutableList()
+                    }
+                }
             }
 
             if(title != null)
@@ -110,6 +156,21 @@ class NotifyListAdapter(var data  :MutableList<Data.NotificationGroup>, var cont
 
     }
 
+    private fun getExpandListener(parentView : View, position: Int) : View.OnClickListener {
+        return View.OnClickListener{
+            data[position].isExpanding = !data[position].isExpanding
+            parentView.detailLayout.toggle()
+            notifyItemChanged(position)
+        }
+    }
+
+    private fun setNotificationTextLines(textView : TextView, isExpanded : Boolean) {
+        if (isExpanded)
+            textView.maxLines = 100
+        else
+            textView.maxLines = 1
+    }
+
     private fun openApp(context: Context, packageName: String?): Boolean {
         val manager = context.packageManager
         return try {
@@ -131,7 +192,6 @@ class NotifyListAdapter(var data  :MutableList<Data.NotificationGroup>, var cont
     }
 
     override fun getItemCount(): Int {
-        if(data == null) return 0
         return data.size
     }
 }

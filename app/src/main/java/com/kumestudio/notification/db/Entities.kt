@@ -1,6 +1,5 @@
-package com.kumestudio.notify.db
+package com.kumestudio.notification.db
 
-import android.graphics.drawable.Icon
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey

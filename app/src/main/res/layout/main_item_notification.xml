@@ -3,16 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/itemNotifyBackground"
-    android:paddingTop="15dp"
-    android:paddingBottom="15dp"
-    android:paddingStart="20dp"
-    android:paddingEnd="20dp"
-
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
         app:layout_constraintTop_toTopOf="parent">
         <LinearLayout
             android:id="@+id/headerLayout"
@@ -57,12 +55,13 @@
                 android:layout_marginStart="5dp"
                 android:includeFontPadding="false"
                 android:textSize="12sp"
+                android:visibility="gone"
                 android:text="@string/main_listItem_dummy_time"
                 />
         </LinearLayout>
         <LinearLayout
             android:id="@+id/contentLayout"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintTop_toBottomOf="@+id/headerLayout"
@@ -81,7 +80,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/main_listItem_dummy_text"
-                android:lines="1"
+                android:maxLines="1"
                 android:layout_marginTop="5dp"
                 />
         </LinearLayout>
@@ -94,20 +93,38 @@
             app:el_expanded="false"
             app:el_parallax="0.5"
             app:layout_constraintTop_toBottomOf="@+id/contentLayout">
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/childList"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:id="@+id/settingLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:orientation="horizontal">
+                    <Button
+                        android:id="@+id/alarmSettingBtn"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:text="알람설정"/>
+                    <Button
+                        android:id="@+id/alarmDeleteBtn"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:text="메시지제거"/>
+                </LinearLayout>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/childList"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    />
+            </LinearLayout>
         </net.cachapa.expandablelayout.ExpandableLayout>
 
-        <Button
-            android:id="@+id/expandButton"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            />
+
         <!--        <LinearLayout-->
         <!--            android:layout_width="match_parent"-->
         <!--            android:layout_height="wrap_content"-->
@@ -130,5 +147,15 @@
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
+    <ImageView
+        android:id="@+id/expandButton"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="5dp"
+        android:src="@drawable/img_arrow_up"
+        android:clickable="false"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>

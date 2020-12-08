@@ -1,7 +1,6 @@
-package com.kumestudio.notify
+package com.kumestudio.notification
 
-import androidx.room.ColumnInfo
-import com.kumestudio.notify.db.NotificationData
+import com.kumestudio.notification.db.NotificationData
 
 class Data {
     companion object{
@@ -12,6 +11,7 @@ class Data {
     data class NotificationGroup(
             val type : Int,
             val `when` : Long,
+            var isExpanding : Boolean = false,
             val childNotifications : MutableList<NotificationData>? = null
     )
 }

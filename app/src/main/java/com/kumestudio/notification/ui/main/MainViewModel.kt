@@ -1,8 +1,8 @@
-package com.kumestudio.notify.ui.main
+package com.kumestudio.notification.ui.main
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.kumestudio.notify.db.NotificationData
+import com.kumestudio.notification.db.NotificationData
 
 class MainViewModel : ViewModel() {
     val textValue: MutableLiveData<String> by lazy {

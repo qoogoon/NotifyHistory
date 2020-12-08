@@ -1,8 +1,6 @@
-package com.kumestudio.notify.service
+package com.kumestudio.notification.service
 
-import android.app.ActivityManager
 import android.app.Notification
-import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.os.IBinder
@@ -11,11 +9,11 @@ import android.service.notification.StatusBarNotification
 import android.util.Log
 import androidx.lifecycle.ViewModelProvider
 import androidx.room.Room
-import com.kumestudio.notify.act.MainActivity
-import com.kumestudio.notify.constant.Tag
-import com.kumestudio.notify.db.AppDatabase
-import com.kumestudio.notify.db.NotificationData
-import com.kumestudio.notify.ui.main.MainViewModel
+import com.kumestudio.notification.act.MainActivity
+import com.kumestudio.notification.constant.MyTag
+import com.kumestudio.notification.db.AppDatabase
+import com.kumestudio.notification.db.NotificationData
+import com.kumestudio.notification.ui.main.MainViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -26,11 +24,13 @@ import java.util.*
  * 알림 수신 시 Background에서 해당 데이터를 가공하여, 로컬 DB에 삽입하는 Service
  */
 class NotificationListener : NotificationListenerService() {
+    companion object{
+        var isRunning = false
+    }
     private lateinit var db : AppDatabase
     private var nullAbleColumns : List<String> = listOf(
         Notification.EXTRA_SUB_TEXT, Notification.EXTRA_TITLE)
-    private val
-            SYSTEM_ALARM_DEFAULT_TIME = 0L
+    private val SYSTEM_ALARM_DEFAULT_TIME = 0L
     private val baseBlackList = listOf(
         "com.android.vending"   //Google Play 스토어
         , "com.google.android.gms"    //Google Play 서비스
@@ -38,28 +38,33 @@ class NotificationListener : NotificationListenerService() {
     )
     
     override fun onBind(intent: Intent?): IBinder? {
-        Log.i(Tag.SERVICE,"onBind")
+        Log.i(MyTag.SERVICE,"onBind")
         return super.onBind(intent)
     }
 
     override fun onCreate() {
-        Log.i(Tag.SERVICE,"onCreate")
+        Log.i(MyTag.SERVICE,"onCreate")
         super.onCreate()
         db = Room.databaseBuilder(
             applicationContext,
             AppDatabase::class.java, "database"
         ).build()
+        isRunning = true
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        isRunning = false
     }
 
     override fun getActiveNotifications(): Array<StatusBarNotification> {
-        Log.i(Tag.SERVICE,"getActiveNotifications")
+        Log.i(MyTag.SERVICE,"getActiveNotifications")
         return super.getActiveNotifications()
     }
 
     override fun onListenerConnected() {
         super.onListenerConnected()
-        Log.i(Tag.SERVICE,"onListenerConnected")
-
+        Log.i(MyTag.SERVICE,"onListenerConnected")
     }
 
     override fun onNotificationPosted(sbn: StatusBarNotification?, rankingMap: RankingMap?) {
@@ -76,7 +81,8 @@ class NotificationListener : NotificationListenerService() {
         if(isSystemAlarm)
             return
 
-        val isNullText = sbn.notification.extras.get(Notification.EXTRA_TEXT) == "null"
+        val text = sbn.notification.extras.get(Notification.EXTRA_TEXT)
+        val isNullText = text == null || text == "null"
         val isNullTitle = sbn.notification.extras.get(Notification.EXTRA_TITLE) == null
         if(isNullText || isNullTitle)
             return
@@ -93,9 +99,9 @@ class NotificationListener : NotificationListenerService() {
 
         CoroutineScope(Dispatchers.IO).launch {
             db.notificationDao().insert(notification)
-            Log.i(Tag.SERVICE,"insert notification data : ${notification.packageName}")
+            Log.i(MyTag.SERVICE,"insert notification data : ${notification.packageName}")
             if(!MainActivity.active) return@launch
-            Log.i(Tag.SERVICE,"refresh list")
+            Log.i(MyTag.SERVICE,"refresh list")
 
             val notificationAll = db.notificationDao().getAll()
 //            try{
@@ -141,7 +147,7 @@ class NotificationListener : NotificationListenerService() {
                 try {
                     notification.largeIcon =  sbn.notification.getLargeIcon().resId
                 }catch (exception: IllegalStateException){
-                    Log.i(Tag.SERVICE, "largeIcon resId 예외처리")
+                    Log.i(MyTag.SERVICE, "largeIcon resId 예외처리")
                 }
             }
             return notification

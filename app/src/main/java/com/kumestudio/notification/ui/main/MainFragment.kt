@@ -1,4 +1,4 @@
-package com.kumestudio.notify.ui.main
+package com.kumestudio.notification.ui.main
 
 import android.app.Application
 import android.os.Bundle
@@ -6,17 +6,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView.VERTICAL
 import androidx.room.Room
-import com.kumestudio.notify.Data
-import com.kumestudio.notify.R
-import com.kumestudio.notify.adapter.main.NotifyListAdapter
-import com.kumestudio.notify.db.AppDatabase
-import com.kumestudio.notify.db.NotificationData
+import com.kumestudio.notification.Data
+import com.kumestudio.notification.R
+import com.kumestudio.notification.adapter.main.NotifyListAdapter
+import com.kumestudio.notification.db.AppDatabase
+import com.kumestudio.notification.db.NotificationData
 import kotlinx.android.synthetic.main.main_fragment.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -31,9 +30,10 @@ class MainFragment : Fragment() {
 
     companion object {
         fun newInstance() = MainFragment()
+        var viewModel: MainViewModel? = null
     }
 
-    private lateinit var viewModel: MainViewModel
+//    private lateinit var viewModel: MainViewModel
     private  lateinit var  viewModelFactory: ViewModelProvider.AndroidViewModelFactory
     lateinit var db : AppDatabase
 
@@ -56,7 +56,7 @@ class MainFragment : Fragment() {
     private fun initViewModel(){
         viewModelFactory = ViewModelProvider.AndroidViewModelFactory.getInstance(Application())
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-        viewModel.listData.observe(viewLifecycleOwner, getNotifyListObserver())
+        viewModel!!.listData.observe(viewLifecycleOwner, getNotifyListObserver())
     }
 
     /**
@@ -77,7 +77,7 @@ class MainFragment : Fragment() {
         CoroutineScope(Dispatchers.IO).launch {
             val notificationAll = db.notificationDao().getAll()
             CoroutineScope(Dispatchers.Main).launch {
-                viewModel.listData.value = notificationAll.toMutableList()
+                viewModel!!.listData.value = notificationAll.toMutableList()
             }
         }
     }
@@ -110,7 +110,7 @@ class MainFragment : Fragment() {
                         divHour = getHour(data.`when`)
                     }
 
-                    val insertGroup = Data.NotificationGroup(Data.NOTIFICATION, data.`when`, mutableListOf(data))
+                    val insertGroup = Data.NotificationGroup(Data.NOTIFICATION, data.`when`, false, mutableListOf(data))
                     groupList.add(insertGroup)
                     tmpData = data
                 }
