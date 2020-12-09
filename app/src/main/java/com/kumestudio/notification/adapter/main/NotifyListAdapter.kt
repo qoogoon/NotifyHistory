@@ -76,17 +76,11 @@ class NotifyListAdapter(var data  :MutableList<Data.NotificationGroup>, var cont
             holder.itemView.text.text = text
             holder.itemView.smallIcon.setImageDrawable(smallIcon.loadDrawable(context))
             holder.itemView.date.text = SimpleDateFormat("h:mm a", Locale.KOREA).format(date)
-
             holder.itemView.packageName.text = childFirstData.packageName
             holder.itemView.childList.adapter = NotifyChildListAdapter(data[position].childNotifications!!.drop(1))
             holder.itemView.childList.adapter!!.notifyDataSetChanged()
 
-//            holder.itemView.contentLayout.setOnClickListener {
-//                data[position].isExpanding = !data[position].isExpanding
-//                holder.itemView.detailLayout.toggle()
-//                notifyItemChanged(position)
-//            }
-            holder.itemView.contentLayout.setOnClickListener(getExpandListener(holder.itemView, position))
+            holder.itemView.itemLayout.setOnClickListener(getExpandListener(holder.itemView, position))
             holder.itemView.expandButton.setOnClickListener(getExpandListener(holder.itemView, position))
 
             if(data[position].isExpanding){
@@ -96,7 +90,7 @@ class NotifyListAdapter(var data  :MutableList<Data.NotificationGroup>, var cont
             }else{
                 holder.itemView.text.maxLines = 1
                 holder.itemView.detailLayout.collapse(false)
-                holder.itemView.expandButton.rotation = 0f
+                holder.itemView.expandButton.rotation = 270f
             }
 
             holder.itemView.headerLayout.setOnClickListener {
@@ -132,28 +126,7 @@ class NotifyListAdapter(var data  :MutableList<Data.NotificationGroup>, var cont
                 holder.itemView.title.text = title
             else
                 holder.itemView.title.visibility = View.GONE
-
-
-            //#region test
-//       data[position].extra = data[position].extra!!.replace("[","")
-//       data[position].extra = data[position].extra!!.replace("]","")
-//       data[position].extra = data[position].extra!!.replace("{","")
-//       data[position].extra = data[position].extra!!.replace("}","")
-//       data[position].extra = data[position].extra!!.replace("Bundle","")
-//       val arrExtra  = data[position].extra!!.split(",")
-//       var extraContent = ""
-//       val childListData : MutableList<NotifyChildListAdapter.Data> = mutableListOf()
-//       for(extra in arrExtra){
-//           val title = "${extra.split("=")[0].replace(" ","")}"
-//           val content = if(extra.split("=").count() > 1) "${extra.split("=")[1].replace('\n',' ')}" else ""
-//           childListData.add(NotifyChildListAdapter.Data(title, content))
-//       }
-//       holder.childList.adapter = NotifyChildListAdapter(childListData)
-//       holder.childList.adapter!!.notifyDataSetChanged()
-            //#endregion
         }
-
-
     }
 
     private fun getExpandListener(parentView : View, position: Int) : View.OnClickListener {
@@ -162,13 +135,6 @@ class NotifyListAdapter(var data  :MutableList<Data.NotificationGroup>, var cont
             parentView.detailLayout.toggle()
             notifyItemChanged(position)
         }
-    }
-
-    private fun setNotificationTextLines(textView : TextView, isExpanded : Boolean) {
-        if (isExpanded)
-            textView.maxLines = 100
-        else
-            textView.maxLines = 1
     }
 
     private fun openApp(context: Context, packageName: String?): Boolean {

@@ -10,6 +10,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModelProvider
 import androidx.room.Room
 import com.kumestudio.notification.act.MainActivity
+import com.kumestudio.notification.constant.Constant
 import com.kumestudio.notification.constant.MyTag
 import com.kumestudio.notification.db.AppDatabase
 import com.kumestudio.notification.db.NotificationData
@@ -57,16 +58,6 @@ class NotificationListener : NotificationListenerService() {
         isRunning = false
     }
 
-    override fun getActiveNotifications(): Array<StatusBarNotification> {
-        Log.i(MyTag.SERVICE,"getActiveNotifications")
-        return super.getActiveNotifications()
-    }
-
-    override fun onListenerConnected() {
-        super.onListenerConnected()
-        Log.i(MyTag.SERVICE,"onListenerConnected")
-    }
-
     override fun onNotificationPosted(sbn: StatusBarNotification?, rankingMap: RankingMap?) {
         super.onNotificationPosted(sbn, rankingMap)
         if(sbn == null)
@@ -99,19 +90,15 @@ class NotificationListener : NotificationListenerService() {
 
         CoroutineScope(Dispatchers.IO).launch {
             db.notificationDao().insert(notification)
-            Log.i(MyTag.SERVICE,"insert notification data : ${notification.packageName}")
             if(!MainActivity.active) return@launch
-            Log.i(MyTag.SERVICE,"refresh list")
 
+            db.notificationDao().deletePreviousTime(Date().time - Constant.dayMs * Constant.dateToSaveInDB)
             val notificationAll = db.notificationDao().getAll()
-//            try{
-                val viewModel = ViewModelProvider(MainActivity.mainFragment).get(MainViewModel::class.java)
-                CoroutineScope(Dispatchers.Main).launch {
-                    viewModel.listData.value = notificationAll.toMutableList()
-                }
-//            }catch (ex : java.lang.IllegalStateException){
-//                Log.e(Tag.SERVICE, "viewmodel error : ${ex.message}")
-//            }
+
+            val viewModel = ViewModelProvider(MainActivity.mainFragment).get(MainViewModel::class.java)
+            CoroutineScope(Dispatchers.Main).launch {
+                viewModel.listData.value = notificationAll.toMutableList()
+            }
         }
     }
 

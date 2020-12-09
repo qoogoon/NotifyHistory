@@ -14,6 +14,7 @@ import androidx.room.Room
 import com.kumestudio.notification.Data
 import com.kumestudio.notification.R
 import com.kumestudio.notification.adapter.main.NotifyListAdapter
+import com.kumestudio.notification.constant.Constant
 import com.kumestudio.notification.db.AppDatabase
 import com.kumestudio.notification.db.NotificationData
 import kotlinx.android.synthetic.main.main_fragment.*
@@ -33,7 +34,6 @@ class MainFragment : Fragment() {
         var viewModel: MainViewModel? = null
     }
 
-//    private lateinit var viewModel: MainViewModel
     private  lateinit var  viewModelFactory: ViewModelProvider.AndroidViewModelFactory
     lateinit var db : AppDatabase
 
@@ -87,27 +87,27 @@ class MainFragment : Fragment() {
      * @return Observer
      */
     private fun getNotifyListObserver() : Observer<List<NotificationData>>{
-        return Observer { arrData->
+        return Observer { arrData ->
+            val arrDataByDateRange = arrData.filter { data -> data.`when` > (Date().time - Constant.dayMs * Constant.dateToList)}
             val adapter = (notificationList.adapter as NotifyListAdapter)
-
             val groupList : MutableList<Data.NotificationGroup> = mutableListOf()
             var tmpData : NotificationData? = null
             var divHour : Int? = null
             var divDay : Int? = null
-            for(data in arrData){
+            for(data in arrDataByDateRange){
                 val isChildData = tmpData != null && data.packageName == tmpData.packageName &&
                         data.title == tmpData.title
                 if(isChildData){
                     groupList.last().childNotifications!!.add(data)
                 }else{
-                    if(divDay != getDay(data.`when`)){
+                    if(divDay != Constant.getDay(data.`when`)){
                         groupList.add(Data.NotificationGroup(Data.DATE, data.`when`))
-                        divDay = getDay(data.`when`)
+                        divDay = Constant.getDay(data.`when`)
                     }
 
-                    if(divHour != getHour(data.`when`)){
+                    if(divHour != Constant.getHour(data.`when`)){
                         groupList.add(Data.NotificationGroup(Data.TIME, data.`when`))
-                        divHour = getHour(data.`when`)
+                        divHour = Constant.getHour(data.`when`)
                     }
 
                     val insertGroup = Data.NotificationGroup(Data.NOTIFICATION, data.`when`, false, mutableListOf(data))
@@ -119,18 +119,6 @@ class MainFragment : Fragment() {
             adapter.data = groupList
             adapter.notifyDataSetChanged()
         }
-    }
-
-    private fun getHour(dateTime : Long): Int{
-        val firstDataTime = Calendar.getInstance()
-        firstDataTime.time = Date(dateTime)
-        return firstDataTime.get(Calendar.HOUR_OF_DAY)
-    }
-
-    private fun getDay(dateTime : Long): Int{
-        val firstDataTime = Calendar.getInstance()
-        firstDataTime.time = Date(dateTime)
-        return firstDataTime.get(Calendar.DAY_OF_MONTH)
     }
 }
 

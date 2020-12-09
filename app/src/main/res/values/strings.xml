@@ -1,11 +1,14 @@
 <resources>
     <string name="app_name">Notification LogCat</string>
     <string name="service_name">Notify_Background</string>
+
+    <!--  MainFragment  -->
     <string name="main_listItem_dummy_appName">app name</string>
     <string name="main_listItem_dummy_time">00:00</string>
     <string name="main_listItem_dummy_date">00년 00월 00일</string>
     <string name="main_listItem_dummy_title">title</string>
     <string name="main_listItem_dummy_text">text</string>
+    <string name="main_empty_list_notice"></string>
 
     <!--  메뉴  -->
     <string name="main_menu_invisible_list">목록 숨기기</string>

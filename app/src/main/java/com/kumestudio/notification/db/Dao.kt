@@ -18,4 +18,11 @@ interface NotificationDao {
 
     @Delete
     fun delete(notification: NotificationData)
+
+    /**
+     * 이전 시간 제거
+     * 특정 시각을 기준으로 이전의 알림을 모두 삭제
+     */
+    @Query("DELETE FROM NotificationData where `when` < :previousTime")
+    fun deletePreviousTime(previousTime : Long)
 }

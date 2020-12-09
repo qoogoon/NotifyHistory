@@ -5,6 +5,7 @@
     android:background="@color/itemNotifyBackground"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/itemLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="15dp"
@@ -157,5 +158,6 @@
         android:layout_marginRight="5dp"
         android:src="@drawable/img_arrow_up"
         android:clickable="false"
+        android:rotation="270"
         />
 </androidx.constraintlayout.widget.ConstraintLayout>
