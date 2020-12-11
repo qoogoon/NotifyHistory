@@ -13,6 +13,7 @@ import com.kumestudio.notification.R
 import com.kumestudio.notification.constant.MyTag
 import com.kumestudio.notification.service.NotificationListener
 import com.kumestudio.notification.ui.main.MainFragment
+import kotlinx.android.synthetic.main.main_activity.*
 
 class MainActivity : AppCompatActivity() {
     companion object{
