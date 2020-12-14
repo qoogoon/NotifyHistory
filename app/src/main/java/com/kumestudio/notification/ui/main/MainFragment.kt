@@ -94,6 +94,7 @@ class MainFragment : Fragment() {
             var tmpData : NotificationData? = null
             var divHour : Int? = null
             var divDay : Int? = null
+            groupList.add(Data.NotificationGroup(Data.HEADER))
             for(data in arrDataByDateRange){
                 val isChildData = tmpData != null && data.packageName == tmpData.packageName &&
                         data.title == tmpData.title
