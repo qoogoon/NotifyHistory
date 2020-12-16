@@ -25,4 +25,10 @@ interface NotificationDao {
      */
     @Query("DELETE FROM NotificationData where `when` < :previousTime")
     fun deletePreviousTime(previousTime : Long)
+
+    /**
+     * 전체 삭제
+     */
+    @Query("DELETE FROM NotificationData")
+    fun deleteAll()
 }

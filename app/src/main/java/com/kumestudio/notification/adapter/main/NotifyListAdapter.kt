@@ -83,7 +83,7 @@ class NotifyListAdapter(var data: MutableList<Data.NotificationGroup>, var conte
         val infoList = listOf(
                 "저장 된 알림은 3일간 유지 되며, 이후 순차적으로 삭제 됩니다.",
                 "알림을 터치하면 확장됩니다.",
-                "저장 된 알림은 기기 내에 저장 되며, 어플을 삭제 시 같이 제거됩니다."
+                "알림은 기기 내에 저장됩니다."
                 )
         return infoList[(Date().time % infoList.count()).toInt()]
     }

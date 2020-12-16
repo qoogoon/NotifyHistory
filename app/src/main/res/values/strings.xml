@@ -11,4 +11,12 @@
 
     <!--  메뉴  -->
     <string name="main_menu_invisible_list">목록 숨기기</string>
+
+    <!--policy-->
+    <string name="policy_agree">확인</string>
+    <string name="policy_url">http://www.otakutest.kr/privacyPolicy.html</string>
+<!--    <string name="policy_url">http://www.naver.com/</string>-->
+
+    <string name="policy_agree_check">위 개인정보처리약관에 동의합니다.</string>
+
 </resources>

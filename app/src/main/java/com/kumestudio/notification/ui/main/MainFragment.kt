@@ -119,6 +119,8 @@ class MainFragment : Fragment() {
 
             adapter.data = groupList
             adapter.notifyDataSetChanged()
+
+            noDataNotice.visibility = if(arrData.isEmpty()) View.VISIBLE else View.GONE
         }
     }
 }
